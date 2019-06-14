@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "textlint": "^11.2.5",
+    "textlint-rule-no-todo": "^2.0.1"
+  }
+}

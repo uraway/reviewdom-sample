@@ -1,0 +1,25 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - run:
+          name: run textlint
+          command: |
+            yarn textlint README.md
+      - run:
+          name: run reviewdog
+          when: on_fail
+          command: |
+            curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s -- -b ./bin
+            yarn textlint -f checkstyle README.md | reviewdog -f=checkstyle -name="textlint" -ci="circle-ci"
+      - save_cache:
+          key: v1-dependency-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
